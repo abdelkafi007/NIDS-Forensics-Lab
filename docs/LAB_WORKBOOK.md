@@ -1,8 +1,7 @@
 # Project 2 Lab Workbook: Network Traffic & Intrusion Detection (NIDS)
 
-**Target Track:** Cycle Ingénieur 1 (2026–2027) ➔ M2 / CI3 Cybersecurity Alternance (France & Morocco)  
-**Target Roles:** SOC Analyst Tier 1/2, Detection Engineer, Blue Team Forensics, DevSecOps  
 **Author:** leviathan  
+**Environment:** Fedora Workstation 44 (Host) | Ubuntu Server 26.04 (Sensor) | QEMU/KVM  
 **Last Updated:** November 2026  
 
 ---
@@ -100,8 +99,8 @@ Rules authored inside `/etc/suricata/rules/local.rules`:
 
 | SID | Attack Vector | MITRE ATT&CK | Key Keywords Used | Status |
 |---|---|---|---|---|
-| **1000001** | Nmap SYN Stealth Port Scan | T1046 | `flags:S,12`, `flow:stateless`, `detection_filter` | Tested ✅ |
-| **1000002** | Obfuscated Base64 User-Agent C2 | T1071.001 | `http.user_agent`, `pcre:"/^[A-Za-z0-9+/]{30,}={0,2}$/"` | Tested ✅ |
+| **1000001** | Nmap SYN Stealth Port Scan | T1046 | `flags:S,12`, `flow:stateless`, `detection_filter` | Verified |
+| **1000002** | Obfuscated Base64 User-Agent C2 | T1071.001 | `http.user_agent`, `pcre:"/^[A-Za-z0-9+/]{30,}={0,2}$/"` | Verified |
 | **1000003** | Unauthorized SSH Tunnel | T1572 | `![22]`, `content:"SSH-2.0-"`, `depth:8`, `flow:to_server` | Drafted |
 | **1000004** | Cobalt Strike/Sliver HTTP Beacon | T1071.001 | `http.method:GET`, `http.uri`, PCRE stager regex | Drafted |
 | **1000005** | Cobalt Strike Default Rogue TLS Cert | T1587.003 | `tls.cert_serial:"08:bb:00:ee"` | Drafted |
@@ -123,6 +122,6 @@ Rules authored inside `/etc/suricata/rules/local.rules`:
 - [ ] Investigate session metadata in Zeek (`conn.log`, `dns.log`, `http.log`, `ssl.log`) using `zeek-cut` and `jq`.
 - [ ] Wireshark / tshark deep packet inspection: payload carving and certificate extraction.
 
-### Phase 5: CV & Portfolio Finalization:
-- [ ] Package clean GitHub repository structure with markdown write-ups and screenshots.
-- [ ] Integrate calibrated French CV bullet points into master CV.
+### Phase 5: Verification & Telemetry Packaging:
+- [ ] Finalize telemetry extraction across all attack vectors.
+- [ ] Export structured alert metrics and Zeek session graphs.

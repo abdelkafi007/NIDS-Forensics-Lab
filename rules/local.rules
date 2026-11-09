@@ -1,7 +1,7 @@
 # ==============================================================================
 # PROJECT 2: NETWORK INTRUSION DETECTION (NIDS) & FORENSICS LAB
 # Sensor: Suricata 8.0.8 (AF-PACKET, Promiscuous, Hardware Offloading Disabled)
-# Author: leviathan | Cybersecurity Engineering Portfolio (CI1 -> M2 Alternance)
+# Author: leviathan
 # File: /etc/suricata/rules/local.rules
 # ==============================================================================
 

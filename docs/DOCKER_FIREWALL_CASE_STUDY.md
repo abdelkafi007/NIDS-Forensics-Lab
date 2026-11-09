@@ -77,7 +77,7 @@ WantedBy=multi-user.target
 
 ---
 
-## 4. Key Takeaways for SOC / Infrastructure Interviews
+## 4. Key Engineering Takeaways
 - Docker and Libvirt/KVM running on the same Linux host frequently fight over `iptables`/`nftables` rulesets.
 - When troubleshooting VM connectivity, always check:
   1. Layer 2 bridge membership (`bridge link show`)

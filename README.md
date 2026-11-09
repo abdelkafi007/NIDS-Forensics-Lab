@@ -10,15 +10,15 @@ A production-grade Blue Team network security monitoring environment built to in
 
 ---
 
-## 📑 Core Documentation & Reference Guides
+## Core Documentation & Reference Guides
 
-- 📘 **[Project 2: Complete Attack Vectors & OWASP/MITRE Reference Guide](Project2NIDSAttacksandOWASPGuide%20(1).pdf)** ([docs copy](docs/Project2_NIDS_Attacks_and_OWASP_Guide.pdf)): Comprehensive breakdown of the 6 attack vectors, MITRE ATT&CK vs. OWASP Top 10 mappings, Suricata signature mechanics, Zeek telemetry fields, and Wireshark forensic filters.
-- 📓 **[Lab Implementation Workbook](docs/LAB_WORKBOOK.md)**: Chronological step-by-step engineering journal detailing hypervisor plumbing, dual-NIC setup, sensor hardening, rule authoring, and upcoming traffic replay phases.
-- 🔍 **[Technical Case Study: Docker vs. Libvirt Firewall Collision](docs/DOCKER_FIREWALL_CASE_STUDY.md)**: Deep dive into diagnosing and resolving the host nftables `FORWARD drop` collision caused by Docker Engine on Fedora Workstation.
+- **[Project 2: Complete Attack Vectors & OWASP/MITRE Reference Guide](Project2NIDSAttacksandOWASPGuide%20(1).pdf)** ([docs copy](docs/Project2_NIDS_Attacks_and_OWASP_Guide.pdf)): Comprehensive breakdown of the 6 attack vectors, MITRE ATT&CK vs. OWASP Top 10 mappings, Suricata signature mechanics, Zeek telemetry fields, and Wireshark forensic filters.
+- **[Lab Implementation Workbook](docs/LAB_WORKBOOK.md)**: Chronological step-by-step engineering journal detailing hypervisor plumbing, dual-NIC setup, sensor hardening, rule authoring, and upcoming traffic replay phases.
+- **[Technical Case Study: Docker vs. Libvirt Firewall Collision](docs/DOCKER_FIREWALL_CASE_STUDY.md)**: Deep dive into diagnosing and resolving the host nftables `FORWARD drop` collision caused by Docker Engine on Fedora Workstation.
 
 ---
 
-## 🏗️ Architecture & Network Topology
+## Architecture & Network Topology
 
 ```text
 ┌────────────────────────────────────────────────────────────────────────┐
@@ -54,7 +54,7 @@ A production-grade Blue Team network security monitoring environment built to in
 
 ---
 
-## 🎯 Threat Detection Coverage Matrix
+## Threat Detection Coverage Matrix
 
 | # | Attack Vector | MITRE ATT&CK | OWASP 2025 | Suricata Signature Mechanics | Zeek Forensic Artifact |
 |---|---|---|---|---|---|
@@ -67,7 +67,7 @@ A production-grade Blue Team network security monitoring environment built to in
 
 ---
 
-## ⚙️ Sensor Engineering & Performance Tuning
+## Sensor Engineering & Performance Tuning
 
 ### 1. Hardware Offloading Elimination
 Modern NICs use Generic Receive Offload (GRO) and Large Receive Offload (LRO) to merge packets into 64KB synthetic frames. This breaks packet-level signature inspection (TCP flags, packet sizes, fragment inspection).
@@ -84,7 +84,7 @@ Suricata is configured with Linux `af-packet` in `suricata.yaml` to read packets
 
 ---
 
-## 📁 Repository Structure
+## Repository Structure
 
 ```text
 Project-2-NIDS-Forensics-Lab/
@@ -94,7 +94,7 @@ Project-2-NIDS-Forensics-Lab/
 │   ├── LAB_WORKBOOK.md                        # Full chronological step-by-step implementation journal
 │   ├── DOCKER_FIREWALL_CASE_STUDY.md          # Deep dive into Docker/nftables forwarding conflict & resolution
 │   ├── Project2_NIDS_Attacks_and_OWASP_Guide.pdf # Attack & OWASP Reference Guide (docs copy)
-│   └── projects_roadmap.pdf                   # Master engineering roadmap (CI1 -> M2 Alternance)
+│   └── projects_roadmap.pdf                   # Security engineering roadmap
 ├── rules/
 │   └── local.rules                    # Custom Suricata detection rules with MITRE/OWASP mappings
 ├── scripts/
@@ -110,17 +110,3 @@ Project-2-NIDS-Forensics-Lab/
 ├── pcaps/                             # Replay PCAP samples for Phase 4
 └── zeek-logs/                         # Extracted Zeek forensic logs
 ```
-
----
-
-## 💼 CV Highlights (Portfolio Packaging)
-
-### Version Française (CV Ingénieur / Alternance SOC)
-> - **Déploiement et réglage fin d’une sonde NIDS Suricata & Zeek (Ubuntu Server 26.04 sur KVM)** : configuration en mode passif/promiscuous sur pont virtuel isolé (`af-packet`), désactivation du hardware offloading (`gro`/`lro`/`tso`).
-> - **Ingénierie de détection (Suricata)** : conception et validation de 6 signatures personnalisées (`local.rules`) pour contrer les scans furtifs Nmap SYN (filtrage par seuil), tunnels SSH non autorisés, C2 Cobalt Strike/Sliver, certificats TLS illégitimes et exfiltration DNS (regex PCRE).
-> - **Analyse médico-légale et investigation de trafic (PCAP)** : rejeu de flux malveillants via `tcpreplay`, extraction et corrélation de métadonnées de sessions sous Zeek (`conn.log`, `dns.log`, `ssl.log`, `http.log`) et extraction de charges utiles sous Wireshark/tshark.
-
-### English Version (SOC Analyst / Detection Engineer)
-> - **Engineered an Enterprise NIDS & NSM Sensor (Suricata 8 + Zeek 9 on KVM)**: Deployed dual-homed virtual architecture with passive promiscuous sniffing on an isolated mirror bridge, hardened with zero NIC offloading and AF-PACKET ring buffers.
-> - **Detection Engineering & Rule Authoring**: Crafted and tuned 6 custom Suricata signatures targeting Nmap stealth SYN scans (rate-filtered), obfuscated Base64 C2 headers, rogue SSH egress tunnels, Cobalt Strike/Sliver malleable profiles, default C2 TLS serials, and high-entropy DNS tunneling.
-> - **Network Forensics & Telemetry Correlation**: Ingested and replayed attack PCAPs via `tcpreplay`; extracted artifacts and reconstructed encrypted/plaintext sessions using Zeek telemetry and Wireshark payload carving.
