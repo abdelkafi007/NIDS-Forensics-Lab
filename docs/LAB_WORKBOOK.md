@@ -11,9 +11,8 @@
 ```text
 ┌────────────────────────────────────────────────────────────────────────┐
 │                        FEDORA WORKSTATION 44 (HOST)                    │
-│   AMD Ryzen 7 | 32 GB RAM | RTX 5060 | QEMU/KVM / Libvirt Hypervisor   │
-│                                                                        │
-│   Host Tools: tcpreplay, wireshark, tshark, nftables, virt-manager    │
+│   Hypervisor: QEMU/KVM managed via libvirt / virt-manager              │
+│   Traffic Engine: tcpreplay, wireshark, tshark, nftables               │
 │                                                                        │
 │   ┌───────────────────────────┐     ┌──────────────────────────────┐   │
 │   │   virbr0 (NAT / default)  │     │   virbr1 (soc-bridge / TAP)  │   │

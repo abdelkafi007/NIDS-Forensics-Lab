@@ -23,9 +23,8 @@ A production-grade Blue Team network security monitoring environment built to in
 ```text
 ┌────────────────────────────────────────────────────────────────────────┐
 │                        FEDORA WORKSTATION 44 (HOST)                    │
-│   Hardware: AMD Ryzen 7 | 32 GB RAM | NVIDIA RTX 5060                  │
-│   Hypervisor: QEMU/KVM managed via libvirt / virt-manager             │
-│   Injection Engine: tcpreplay, wireshark, tshark, nftables             │
+│   Hypervisor: QEMU/KVM managed via libvirt / virt-manager              │
+│   Traffic Engine: tcpreplay, wireshark, tshark, nftables               │
 │                                                                        │
 │   ┌───────────────────────────┐     ┌──────────────────────────────┐   │
 │   │   virbr0 (NAT / default)  │     │   virbr1 (soc-bridge / TAP)  │   │
