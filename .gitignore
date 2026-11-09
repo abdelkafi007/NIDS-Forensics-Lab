@@ -1,0 +1,14 @@
+# Personal / non-public documents
+docs/INTERVIEW_DEFENSE_GUIDE.md
+
+# Empty placeholder directories (will be populated later)
+# Keep the directories via .gitkeep files
+
+# OS / Editor artifacts
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.vscode/
+.idea/

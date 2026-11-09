@@ -1,0 +1,13 @@
+[Unit]
+Description=Allow libvirt VM traffic through Docker FORWARD chain
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/sbin/nft insert rule ip filter DOCKER-USER iifname "virbr0" accept
+ExecStart=/usr/sbin/nft insert rule ip filter DOCKER-USER oifname "virbr0" accept
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

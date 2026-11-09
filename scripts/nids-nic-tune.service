@@ -1,0 +1,12 @@
+[Unit]
+Description=NIDS Interface Tuning (Promiscuous & Disable Offloads)
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/sbin/ip link set dev enp7s0 up promisc on
+ExecStart=/sbin/ethtool -K enp7s0 gro off lro off tso off gso off rx off tx off
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
