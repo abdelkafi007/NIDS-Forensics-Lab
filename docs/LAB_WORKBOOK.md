@@ -1,4 +1,4 @@
-# Project 2 Lab Workbook: Network Traffic & Intrusion Detection (NIDS)
+# Lab Workbook: Network Traffic & Intrusion Detection (NIDS)
 
 **Author:** leviathan  
 **Environment:** Fedora Workstation 44 (Host) | Ubuntu Server 26.04 (Sensor) | QEMU/KVM  

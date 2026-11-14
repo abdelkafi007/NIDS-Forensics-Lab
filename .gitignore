@@ -12,3 +12,6 @@ Thumbs.db
 *~
 .vscode/
 .idea/
+
+# Local utility scripts (not needed on GitHub)
+scripts/

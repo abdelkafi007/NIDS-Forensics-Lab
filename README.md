@@ -12,7 +12,7 @@ A production-grade Blue Team network security monitoring environment built to in
 
 ## Core Documentation & Reference Guides
 
-- **[Project 2: Complete Attack Vectors & OWASP/MITRE Reference Guide](Project2NIDSAttacksandOWASPGuide%20(1).pdf)**: Comprehensive breakdown of the 6 attack vectors, MITRE ATT&CK vs. OWASP Top 10 mappings, Suricata signature mechanics, Zeek telemetry fields, and Wireshark forensic filters.
+- **[Complete Attack Vectors & OWASP/MITRE Reference Guide](NIDS_Attacks_and_OWASP_Guide.pdf)**: Comprehensive breakdown of the 6 attack vectors, MITRE ATT&CK vs. OWASP Top 10 mappings, Suricata signature mechanics, Zeek telemetry fields, and Wireshark forensic filters.
 - **[Lab Implementation Workbook](docs/LAB_WORKBOOK.md)**: Chronological step-by-step engineering journal detailing hypervisor plumbing, dual-NIC setup, sensor hardening, rule authoring, and forensic replay execution.
 - **[Technical Case Study: Docker vs. Libvirt Firewall Collision](docs/DOCKER_FIREWALL_CASE_STUDY.md)**: Deep dive into diagnosing and resolving the host nftables `FORWARD drop` collision caused by Docker Engine on Fedora Workstation.
 - **[Senior SOC Interview Defense Guide](docs/INTERVIEW_DEFENSE_GUIDE.md)**: Technical breakdown of detection filter mechanics, TCP flag masking (`flags:S,12`), flow state tracking, NIC offload impacts, and Zeek vs. Suricata architecture.
@@ -74,7 +74,7 @@ Modern NICs use Generic Receive Offload (GRO) and Large Receive Offload (LRO) to
 ```bash
 sudo ethtool -K enp7s0 gro off lro off tso off gso off rx off tx off
 ```
-Persisted at boot via systemd unit: [`scripts/nids-nic-tune.service`](scripts/nids-nic-tune.service).
+Persisted at boot via systemd unit `nids-nic-tune.service`.
 
 ### 2. Stealth Passive Sniffing Port
 The sniffing interface (`enp7s0`) has **no IP address assigned** (`dhcp4: false`, `dhcp6: false`) and runs in **Promiscuous Mode** (`ip link set dev enp7s0 up promisc on`). It cannot be targeted, scanned, or pinged by an adversary on the wire.
@@ -131,7 +131,7 @@ Extracting high-entropy subdomain chunks from `dns.log` and decoding the exfiltr
 ```text
 NIDS-Forensics-Lab/
 ├── README.md                          # Master documentation & technical showcase
-├── Project2NIDSAttacksandOWASPGuide (1).pdf # Master attack vectors & OWASP/MITRE guide
+├── NIDS_Attacks_and_OWASP_Guide.pdf   # Complete attack vectors & OWASP/MITRE guide
 ├── docs/
 │   ├── LAB_WORKBOOK.md                # Full chronological step-by-step implementation journal
 │   ├── DOCKER_FIREWALL_CASE_STUDY.md  # Deep dive into Docker/nftables forwarding conflict & resolution
@@ -139,10 +139,6 @@ NIDS-Forensics-Lab/
 │   └── projects_roadmap.pdf           # Master engineering roadmap (CI1 -> M2 Alternance)
 ├── rules/
 │   └── local.rules                    # Custom Suricata detection rules with MITRE/OWASP mappings
-├── scripts/
-│   ├── generate_pcaps.py              # Deterministic RFC-compliant PCAP attack generator
-│   ├── nids-nic-tune.service          # Promiscuous mode & offload disablement service
-│   └── docker-libvirt-fix.service     # Host-level Docker nftables exception service
 ├── screenshots/                       # 8 essential, high-resolution evidence screenshots
 │   ├── 01_sensor_promisc_mode.png
 │   ├── 02_suricata_syntax_test.png
