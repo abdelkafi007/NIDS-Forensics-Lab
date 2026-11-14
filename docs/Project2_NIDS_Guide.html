@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Project 2: NIDS & Traffic Forensics Attack & Defense Guide</title>
+<style>
+  @page {
+    size: A4;
+    margin: 18mm 14mm 18mm 14mm;
+    @top-right {
+      content: "NIDS & Forensics Lab | Technical Guide";
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-size: 7.5pt;
+      color: #64748b;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 4px;
+      margin-bottom: 8px;
+    }
+    @bottom-left {
+      content: "Project 2: Network Intrusion Detection & Hardening Reference";
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-size: 7.5pt;
+      color: #64748b;
+      border-top: 1px solid #e2e8f0;
+      padding-top: 4px;
+    }
+    @bottom-right {
+      content: "Page " counter(page) " of " counter(pages);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-size: 7.5pt;
+      color: #64748b;
+      border-top: 1px solid #e2e8f0;
+      padding-top: 4px;
+    }
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 9pt;
+    line-height: 1.45;
+    color: #1e293b;
+    margin: 0;
+    padding: 0;
+  }
+
+  h1 {
+    font-size: 19pt;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 4px 0;
+    letter-spacing: -0.5px;
+  }
+
+  .subtitle {
+    font-size: 10pt;
+    color: #475569;
+    margin: 0 0 10px 0;
+    font-weight: 500;
+  }
+
+  .stack-badge {
+    display: inline-block;
+    background: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    color: #334155;
+    font-size: 7.5pt;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+    margin-bottom: 16px;
+  }
+
+  h2 {
+    font-size: 12.5pt;
+    font-weight: 700;
+    color: #0f172a;
+    border-bottom: 1.5px solid #0284c7;
+    padding-bottom: 3px;
+    margin: 18px 0 8px 0;
+    page-break-after: avoid;
+  }
+
+  h3 {
+    font-size: 10.5pt;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 12px 0 4px 0;
+    page-break-after: avoid;
+  }
+
+  p {
+    margin: 0 0 7px 0;
+  }
+
+  .callout {
+    background: #f8fafc;
+    border-left: 3.5px solid #0284c7;
+    padding: 7px 11px;
+    margin: 8px 0;
+    border-radius: 0 4px 4px 0;
+    font-size: 8.5pt;
+    page-break-inside: avoid;
+  }
+
+  .callout-title {
+    font-weight: 700;
+    color: #0369a1;
+    margin-bottom: 3px;
+    text-transform: uppercase;
+    font-size: 7.5pt;
+    letter-spacing: 0.5px;
+  }
+
+  .meta-tag-bar {
+    display: flex;
+    gap: 8px;
+    margin: 5px 0 8px 0;
+    font-size: 8pt;
+  }
+
+  .meta-tag {
+    background: #e0f2fe;
+    color: #0369a1;
+    padding: 2px 7px;
+    border-radius: 3px;
+    font-weight: 600;
+  }
+
+  .meta-tag.mitre {
+    background: #f3e8ff;
+    color: #7e22ce;
+  }
+
+  .meta-tag.owasp {
+    background: #fef3c7;
+    color: #92400e;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 8px 0 12px 0;
+    font-size: 8pt;
+    page-break-inside: avoid;
+  }
+
+  th {
+    background: #0f172a;
+    color: #ffffff;
+    font-weight: 700;
+    padding: 5px 8px;
+    text-align: left;
+    border: 1px solid #0f172a;
+  }
+
+  td {
+    padding: 5px 8px;
+    border: 1px solid #cbd5e1;
+    vertical-align: top;
+  }
+
+  tr:nth-child(even) {
+    background: #f8fafc;
+  }
+
+  code {
+    font-family: "Liberation Mono", Consolas, "Courier New", monospace;
+    font-size: 8pt;
+    background: #f1f5f9;
+    color: #0f172a;
+    padding: 1px 4px;
+    border-radius: 3px;
+    border: 1px solid #e2e8f0;
+  }
+
+  pre {
+    font-family: "Liberation Mono", Consolas, "Courier New", monospace;
+    font-size: 7.8pt;
+    line-height: 1.35;
+    background: #0f172a;
+    color: #f8fafc;
+    padding: 8px 10px;
+    border-radius: 4px;
+    margin: 6px 0 8px 0;
+    overflow-x: hidden;
+    white-space: pre-wrap;
+    word-break: break-all;
+    page-break-inside: avoid;
+  }
+
+  .screenshot-container {
+    margin: 8px 0 12px 0;
+    border: 1px solid #cbd5e1;
+    border-radius: 5px;
+    padding: 5px;
+    background: #ffffff;
+    page-break-inside: avoid;
+  }
+
+  .screenshot-container img {
+    width: 100%;
+    max-height: 180px;
+    object-fit: contain;
+    border-radius: 3px;
+    display: block;
+    margin: 0 auto;
+  }
+
+  .screenshot-caption {
+    font-size: 7.5pt;
+    color: #475569;
+    text-align: center;
+    margin-top: 4px;
+    font-weight: 600;
+  }
+
+  .defense-box {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-left: 3.5px solid #16a34a;
+    padding: 7px 10px;
+    margin: 6px 0 10px 0;
+    border-radius: 0 4px 4px 0;
+    font-size: 8.5pt;
+    page-break-inside: avoid;
+  }
+
+  .defense-title {
+    font-weight: 700;
+    color: #15803d;
+    font-size: 8pt;
+    margin-bottom: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .page-break {
+    page-break-before: always;
+  }
+
+  ul {
+    margin: 4px 0 8px 16px;
+    padding: 0;
+  }
+
+  li {
+    margin-bottom: 3px;
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER / HEADER -->
+<h1>Network Intrusion Detection & Traffic Forensics Guide</h1>
+<div class="subtitle">Complete Technical Breakdown of Project 2 Attack Vectors, Suricata Signatures, Zeek Telemetry, Live Evidence & Infrastructure Hardening</div>
+<div class="stack-badge">STACK: SURICATA 8.0 NIDS • ZEEK 9.0 NSM • WIRESHARK FORENSICS • AF-PACKET • LINUX VIRTUAL BRIDGE</div>
+
+<!-- SECTION 1: ARCHITECTURAL CONTEXT -->
+<h2>1. Architectural Context: OWASP Top 10 vs. Network Attacks</h2>
+<p>Before investigating packets, it is critical to clarify a common industry misconception regarding security frameworks—especially for technical interviews:</p>
+
+<div class="callout">
+  <div class="callout-title">Crucial Framework Distinction: OWASP Top 10 vs. MITRE ATT&amp;CK</div>
+  There is no official "OWASP Top 10 for Network Attacks." The OWASP Top 10 (2021 and 2025 release) is strictly a <strong>Web Application &amp; API Security (OSI Layer 7)</strong> framework. For low-level network intrusions, C2 beaconing, port scanning, and protocol tunneling (OSI Layers 3, 4, and 7 network transport), enterprise SOC teams use the <strong>MITRE ATT&amp;CK Framework</strong>.<br>
+  However, network attacks analyzed in Project 2 directly exploit or trigger OWASP Top 10 Application categories when crossing the wire. Both mappings are detailed below for technical precision.
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width: 20%;">Attack Vector</th>
+      <th style="width: 14%;">OSI Layer</th>
+      <th style="width: 20%;">MITRE ATT&amp;CK ID</th>
+      <th style="width: 26%;">Related OWASP 2025 Mapping</th>
+      <th style="width: 20%;">Suricata SID</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>1. Raw SYN Port Scans</strong></td>
+      <td>Layer 4 (TCP)</td>
+      <td><code>T1046</code> Network Discovery</td>
+      <td>A02:2025 Security Misconfiguration (Exposed services)</td>
+      <td><code>1000001</code></td>
+    </tr>
+    <tr>
+      <td><strong>2. Base64 HTTP User-Agents</strong></td>
+      <td>Layer 7 (HTTP)</td>
+      <td><code>T1071.001</code> / <code>T1132.001</code></td>
+      <td>A05:2025 Injection &amp; A09:2025 Logging Failures</td>
+      <td><code>1000002</code></td>
+    </tr>
+    <tr>
+      <td><strong>3. SSH Egress Tunnels</strong></td>
+      <td>Layer 4/7 (SSH)</td>
+      <td><code>T1572</code> Protocol Tunneling</td>
+      <td>A01:2025 Broken Access Control (Unfiltered Egress)</td>
+      <td><code>1000003</code></td>
+    </tr>
+    <tr>
+      <td><strong>4. C2 Beaconing (Cobalt Strike)</strong></td>
+      <td>Layer 7 (HTTP)</td>
+      <td><code>T1071.001</code> / <code>T1041</code></td>
+      <td>A08:2025 Integrity Failures &amp; A09 Logging Failures</td>
+      <td><code>1000004</code></td>
+    </tr>
+    <tr>
+      <td><strong>5. Rogue / Default TLS Certs</strong></td>
+      <td>Layer 6/7 (TLS)</td>
+      <td><code>T1587.003</code> Digital Certs</td>
+      <td>A04:2025 Cryptographic Failures (Untrusted Certs)</td>
+      <td><code>1000005</code></td>
+    </tr>
+    <tr>
+      <td><strong>6. DNS Exfiltration Tunnels</strong></td>
+      <td>Layer 7 (DNS)</td>
+      <td><code>T1048.003</code> DNS Exfiltration</td>
+      <td>A02:2025 Security Misconfiguration (Open DNS Egress)</td>
+      <td><code>1000006</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- SECTION 2: ATTACK BREAKDOWNS -->
+<h2>2. Deep-Dive Breakdown of Project 2 Attack Vectors &amp; Live Evidence</h2>
+
+<!-- ATTACK 1 -->
+<h3>Attack 1: Raw SYN Port Scanning (Stealth / Half-Open Recon)</h3>
+<div class="meta-tag-bar">
+  <span class="meta-tag mitre">MITRE: T1046 (Network Service Discovery)</span>
+  <span class="meta-tag owasp">OWASP: A02:2025 Security Misconfiguration</span>
+  <span class="meta-tag">Layer 4 (TCP)</span>
+</div>
+<p><strong>How It Works:</strong> In a half-open SYN scan (e.g., <code>nmap -sS</code>), the attacker rapidly transmits TCP SYN packets across port ranges without completing the 3-way handshake. When an open port responds with <code>SYN-ACK</code>, the scanner immediately transmits a <code>RST</code> frame to abort connection establishment. Closed ports respond with <code>RST-ACK</code>.</p>
+<p><strong>Suricata Signature:</strong></p>
+<pre>alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg:"SOC-ALERT - Potential Nmap TCP SYN Port Scan Detected"; flags:S,12; flow:stateless; detection_filter:track by_src, count 20, seconds 5; classtype:attempted-recon; sid:1000001; rev:1;)</pre>
+<ul>
+  <li><code>flags:S,12;</code>: Matches pure SYN packets while masking out CWR (bit 1) and ECE (bit 2) RFC 3168 ECN congestion bits to eliminate false negatives.</li>
+  <li><code>flow:stateless;</code>: Evaluates raw datagrams without requiring TCP session state tables.</li>
+  <li><code>detection_filter:track by_src, count 20, seconds 5;</code>: Tracks state per source IP, suppressing alerts for the first 20 probes and triggering only on sustained bursts to eliminate false alarms from legitimate client traffic.</li>
+</ul>
+
+<div class="screenshot-container">
+  <img src="/home/leviathan/Cybersecurity/Project-2-NIDS-Forensics-Lab/screenshots/03_syn_scan_and_base64_c2_alert.png" alt="SYN Scan and Base64 Alerts">
+  <div class="screenshot-caption">Figure 1: Live Zeek conn.log analysis displaying S0/REJ states alongside decoded Base64 command execution.</div>
+</div>
+
+<div class="defense-box">
+  <div class="defense-title">Infrastructure Defense &amp; Hardening</div>
+  <ul>
+    <li><strong>Stateful Firewall / Rate Limiting:</strong> Deploy nftables rate-limiting rules (e.g. <code>ct state new limit rate 15/minute drop</code>) to throttle SYN probes at the perimeter.</li>
+    <li><strong>Suricata IPS Inline Mode:</strong> Switch Suricata from IDS (<code>alert</code>) to IPS (<code>drop</code>) using <code>--af-packet</code> inline IPS mode to actively drop packets from aggressive scanning sources.</li>
+    <li><strong>Fail2ban / Port Knocking:</strong> Dynamically ban IPs exhibiting multi-port connection drops within short windows.</li>
+  </ul>
+</div>
+
+<!-- ATTACK 2 -->
+<div class="page-break"></div>
+<h3>Attack 2: Obfuscated Base64-Encoded HTTP User-Agents (C2 / Web Shell)</h3>
+<div class="meta-tag-bar">
+  <span class="meta-tag mitre">MITRE: T1071.001 (Web Protocols) / T1132.001 (Encoding)</span>
+  <span class="meta-tag owasp">OWASP: A05:2025 Injection / A09 Logging Failures</span>
+  <span class="meta-tag">Layer 7 (HTTP)</span>
+</div>
+<p><strong>How It Works:</strong> Attackers hide remote shell commands or C2 authentication tokens inside the HTTP <code>User-Agent</code> header. Because standard Web Application Firewalls (WAFs) often inspect URI parameters and POST bodies while overlooking request headers, Base64-encoded payloads bypass naive string filters.</p>
+<p><strong>Suricata Signature:</strong></p>
+<pre>alert http $EXTERNAL_NET any -> $HOME_NET any (msg:"SOC-ALERT - Obfuscated Base64 String in HTTP User-Agent (Possible C2)"; flow:established,to_server; http.user_agent; pcre:"/^[A-Za-z0-9+\/]{30,}={0,2}$/"; classtype:trojan-activity; sid:1000002; rev:1;)</pre>
+<ul>
+  <li><code>http.user_agent;</code>: Normalizes and isolates the User-Agent buffer from the HTTP stream.</li>
+  <li><code>pcre:"/^[A-Za-z0-9+\/]{30,}={0,2}$/";</code>: Enforces strict Base64 character alphabet validation with minimum length 30 and terminal padding. Valid browser strings containing tokens like <code>Mozilla/5.0</code> are ignored.</li>
+  <li><strong>Forensic Extraction:</strong> In Zeek's <code>http.log</code>, the User-Agent was extracted and decoded via <code>base64 -d</code>, uncovering the reconnaissance command: <code>whoami && id && uname -a && cat /etc/passwd</code>.</li>
+</ul>
+
+<div class="defense-box">
+  <div class="defense-title">Infrastructure Defense &amp; Hardening</div>
+  <ul>
+    <li><strong>WAF Header Validation (ModSecurity / Coraza):</strong> Enforce strict regular expressions rejecting non-RFC compliant User-Agents or unauthenticated strings lacking valid browser identifiers.</li>
+    <li><strong>Zero-Trust Web Application Architecture:</strong> Treat all HTTP headers as untrusted user input; sanitize and log headers before passing them to application runtime logic.</li>
+  </ul>
+</div>
+
+<!-- ATTACK 3 -->
+<h3>Attack 3: Unauthorized Outbound SSH Egress Tunnels (Reverse Port Forwarding)</h3>
+<div class="meta-tag-bar">
+  <span class="meta-tag mitre">MITRE: T1572 (Protocol Tunneling) / T1021.004 (SSH)</span>
+  <span class="meta-tag owasp">OWASP: A01:2025 Broken Access Control</span>
+  <span class="meta-tag">Layer 4/7 (SSH)</span>
+</div>
+<p><strong>How It Works:</strong> Internal compromised endpoints establish an outbound SSH connection (<code>ssh -R</code>) to an external attacker-controlled server over allowed egress ports (e.g., port 443). Once connected, the encrypted SSH tunnel allows the external attacker to route commands back into the internal network, completely evading perimeter inbound firewall rules.</p>
+<p><strong>Suricata Signature:</strong></p>
+<pre>alert tcp $HOME_NET any -> $EXTERNAL_NET ![22] (msg:"SOC-ALERT - Suspicious Outbound SSH Tunnel on Non-Standard Port"; flow:established,to_server; content:"SSH-2.0-"; depth:8; classtype:bad-unknown; sid:1000003; rev:1;)</pre>
+<ul>
+  <li><code>![22];</code>: Flags any outbound traffic targeted at destination ports other than standard SSH (port 22).</li>
+  <li><code>content:"SSH-2.0-"; depth:8;</code>: Validates RFC 4253 protocol compliance by scanning the first 8 bytes of the client handshake packet.</li>
+  <li><code>flow:established,to_server;</code>: Tracks outbound connection initiation moving from the internal client towards the external listener.</li>
+</ul>
+
+<div class="screenshot-container">
+  <img src="/home/leviathan/Cybersecurity/Project-2-NIDS-Forensics-Lab/screenshots/04_ssh_tunnel_and_c2_beaconing.png" alt="SSH Tunnel and C2 Beaconing fast.log">
+  <div class="screenshot-caption">Figure 2: Suricata fast.log capturing Unauthorized SSH Egress on TCP/443 alongside periodic 5.0s C2 Heartbeats.</div>
+</div>
+
+<div class="defense-box">
+  <div class="defense-title">Infrastructure Defense &amp; Hardening</div>
+  <ul>
+    <li><strong>Strict Egress Filtering (Zero-Egress Policy):</strong> Default-deny all outbound traffic at the edge firewall; only allow web traffic through an authenticated corporate Next-Gen Firewall (NGFW) or forward proxy.</li>
+    <li><strong>Protocol Inspection (App-ID / Deep Packet Inspection):</strong> Block connections on port 443 whose application layer does not match genuine TLS/HTTPS handshakes.</li>
+    <li><strong>Host SSH Hardening:</strong> Configure <code>/etc/ssh/sshd_config</code> with <code>GatewayPorts no</code> and <code>AllowTcpForwarding no</code> on servers to prevent unauthorized tunneling.</li>
+  </ul>
+</div>
+
+<!-- ATTACK 4 -->
+<div class="page-break"></div>
+<h3>Attack 4: Command &amp; Control (C2) Beaconing &amp; Payload Staging (Cobalt Strike / Sliver)</h3>
+<div class="meta-tag-bar">
+  <span class="meta-tag mitre">MITRE: T1071.001 (Web Protocols) / T1041 (Exfiltration Over C2)</span>
+  <span class="meta-tag owasp">OWASP: A08:2025 Integrity Failures</span>
+  <span class="meta-tag">Layer 7 (HTTP)</span>
+</div>
+<p><strong>How It Works:</strong> Implants deployed inside an enterprise do not maintain persistent noisy connections. Instead, they transmit rhythmic heartbeat requests (beacons) at regular intervals (e.g., exactly every 5.0 seconds). Once tasked, the implant downloads a second-stage payload via malleable C2 URIs (such as 4-character checksum URIs like <code>/aB3z</code> or <code>/submit.php?id=</code>).</p>
+<p><strong>Suricata Signature:</strong></p>
+<pre>alert http $HOME_NET any -> $EXTERNAL_NET any (msg:"SOC-ALERT - Cobalt Strike / Sliver HTTP C2 Beaconing Pattern"; flow:established,to_server; http.method; content:"GET"; http.uri; pcre:"/^\/(submit\.php\?id=[0-9a-fA-F]{8}|activity|[a-zA-Z0-9]{4})$/"; classtype:trojan-activity; sid:1000004; rev:1;)</pre>
+
+<div class="screenshot-container">
+  <img src="/home/leviathan/Cybersecurity/Project-2-NIDS-Forensics-Lab/screenshots/05_wireshark_payload_carving.png" alt="Wireshark HTTP Object Export">
+  <div class="screenshot-caption">Figure 3: Wireshark Export HTTP Object window isolating periodic beacons and the 142-byte stager binary (aB3z).</div>
+</div>
+
+<div class="screenshot-container">
+  <img src="/home/leviathan/Cybersecurity/Project-2-NIDS-Forensics-Lab/screenshots/06_carved_payload_triage.png" alt="Carved Payload Triage">
+  <div class="screenshot-caption">Figure 4: Non-destructive forensic triage of carved binary: SHA-256 hash calculation and string extraction.</div>
+</div>
+
+<div class="defense-box">
+  <div class="defense-title">Infrastructure Defense &amp; Hardening</div>
+  <ul>
+    <li><strong>EDR Behavioral Monitoring:</strong> Deploy Endpoint Detection and Response (EDR) agents to detect memory injection, reflective DLL loading, and abnormal parent-child process spawns.</li>
+    <li><strong>Proxy Jitter &amp; Beacon Detection:</strong> Configure automated analytics on proxy/Zeek logs to calculate inter-arrival connection variance; flag connections exhibiting rhythmic jitter &lt; 10%.</li>
+    <li><strong>DNS &amp; IP Threat Intelligence Feeds:</strong> Ingest known C2 framework infrastructure lists into perimeter DNS firewalls for automated blocking.</li>
+  </ul>
+</div>
+
+<!-- ATTACK 5 -->
+<div class="page-break"></div>
+<h3>Attack 5: Rogue / Default Cobalt Strike TLS Certificate Impersonation</h3>
+<div class="meta-tag-bar">
+  <span class="meta-tag mitre">MITRE: T1587.003 (Digital Certificates) / T1573 (Encrypted Channel)</span>
+  <span class="meta-tag owasp">OWASP: A04:2025 Cryptographic Failures</span>
+  <span class="meta-tag">Layer 6/7 (TLS)</span>
+</div>
+<p><strong>How It Works:</strong> Attackers encrypt C2 communications with TLS/HTTPS to blind network monitors. However, the X.509 server certificate is exchanged in cleartext during TLS Handshake Type 11. Cobalt Strike default team server configurations ship with a hardcoded self-signed certificate bearing serial number <code>08:bb:00:ee</code> (decimal: <code>146473198</code>) and a spoofed Microsoft Corporation identity.</p>
+<p><strong>Suricata Signature:</strong></p>
+<pre>alert tls $EXTERNAL_NET any -> $HOME_NET any (msg:"SOC-ALERT - Known Cobalt Strike Default TLS Certificate Serial Detected"; flow:established,to_client; tls.cert_serial; content:"08:bb:00:ee"; classtype:trojan-activity; sid:1000005; rev:1;)</pre>
+<ul>
+  <li><code>tls.cert_serial;</code>: Sticky buffer extracting the normalized X.509 serial from unencrypted Handshake records.</li>
+  <li><code>flow:established,to_client;</code>: The external C2 server transmits its certificate to the internal client.</li>
+</ul>
+
+<div class="screenshot-container">
+  <img src="/home/leviathan/Cybersecurity/Project-2-NIDS-Forensics-Lab/screenshots/07_rogue_tls_certificate.png" alt="Wireshark TLS Certificate Inspection">
+  <div class="screenshot-caption">Figure 5: Wireshark dissection of TLS Handshake Type 11 confirming Serial Number 0x08bb00ee and JA3 fingerprint.</div>
+</div>
+
+<div class="defense-box">
+  <div class="defense-title">Infrastructure Defense &amp; Hardening</div>
+  <ul>
+    <li><strong>TLS Decryption / SSL Forward Proxy:</strong> Implement enterprise TLS inspection to terminate and re-encrypt outbound HTTPS sessions, validating certificate trust chains and blocking self-signed certs.</li>
+    <li><strong>Certificate Authority (CA) Whitelisting:</strong> Reject outbound connections whose root CA is not in the enterprise-managed PKI trust store.</li>
+    <li><strong>JA3 / JA4 Fingerprint Blocking:</strong> Block TLS client/server combinations matching known adversary framework fingerprints at the edge firewall.</li>
+  </ul>
+</div>
+
+<!-- ATTACK 6 -->
+<div class="page-break"></div>
+<h3>Attack 6: DNS Tunneling &amp; Covert Data Exfiltration</h3>
+<div class="meta-tag-bar">
+  <span class="meta-tag mitre">MITRE: T1048.003 (Exfiltration Over DNS)</span>
+  <span class="meta-tag owasp">OWASP: A02:2025 Security Misconfiguration</span>
+  <span class="meta-tag">Layer 7 (DNS)</span>
+</div>
+<p><strong>How It Works:</strong> Attackers exploit open UDP/53 outbound access by registering an authoritative domain (e.g. <code>evil-dns-c2.com</code>). Malicious implants encode confidential files into hex or Base32 chunks and issue standard DNS lookups for subdomains exceeding 35 characters. The authoritative server receives and reassembles the chunks without any direct connection between victim and attacker.</p>
+<p><strong>Suricata Signature:</strong></p>
+<pre>alert dns $HOME_NET any -> $EXTERNAL_NET any (msg:"SOC-ALERT - Potential DNS Data Exfiltration Tunnel (Long Encoded Subdomain)"; flow:to_server; dns.query; pcre:"/^[a-zA-Z0-9_-]{35,}\./"; classtype:bad-unknown; sid:1000006; rev:1;)</pre>
+
+<div class="screenshot-container">
+  <img src="/home/leviathan/Cybersecurity/Project-2-NIDS-Forensics-Lab/screenshots/08_dns_exfiltration_decoded_secret.png" alt="DNS Exfiltration Decoded Secret">
+  <div class="screenshot-caption">Figure 6: Zeek dns.log query extraction and hex-stream decoding uncovering stolen database passwords and API keys.</div>
+</div>
+
+<div class="defense-box">
+  <div class="defense-title">Infrastructure Defense &amp; Hardening</div>
+  <ul>
+    <li><strong>Internal DNS Resolver Restriction:</strong> Block all outbound UDP/TCP port 53 traffic at the firewall except from authorized internal enterprise DNS resolvers (prevent direct external resolver queries).</li>
+    <li><strong>DNS Response Policy Zones (RPZ) &amp; Sinkholing:</strong> Deploy Protective DNS (e.g., Cisco Umbrella, Quad9) to dynamically block high-entropy, freshly registered domains (NRDs).</li>
+    <li><strong>Shannon Entropy Inspection:</strong> Flag DNS query labels exhibiting high mathematical entropy and anomalous byte-length distributions.</li>
+  </ul>
+</div>
+
+<!-- SECTION 3: FORENSIC WORKFLOW -->
+<h2>3. Complete Forensic Investigation Pipeline (Cheat Sheet)</h2>
+<p>When investigating network alerts, follow this structured 4-phase incident response triage workflow:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width: 15%;">Stage</th>
+      <th style="width: 25%;">Tool &amp; Command</th>
+      <th style="width: 30%;">Operational Objective</th>
+      <th style="width: 30%;">Forensic Artifact Recorded</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>1. Ingestion</strong></td>
+      <td><code>sudo tcpreplay -i virbr1 sample.pcap</code></td>
+      <td>Replay raw Layer-2 Ethernet frames across isolated sniffing bridge.</td>
+      <td>Traffic metrics, packet count, interface link status.</td>
+    </tr>
+    <tr>
+      <td><strong>2. Alerting</strong></td>
+      <td><code>tail -f /var/log/suricata/fast.log</code></td>
+      <td>Real-time signature matching and priority categorization.</td>
+      <td>Alert timestamp, SID, classification, attacker/victim IP:port.</td>
+    </tr>
+    <tr>
+      <td><strong>3. Telemetry</strong></td>
+      <td><code>zeek-cut id.orig_h query &lt; dns.log</code></td>
+      <td>Stateful protocol metadata extraction and behavioral analysis.</td>
+      <td>Connection durations, TCP states (S0/REJ), cert serials.</td>
+    </tr>
+    <tr>
+      <td><strong>4. Deep Forensics</strong></td>
+      <td><code>wireshark sample.pcap</code> / <code>sha256sum</code></td>
+      <td>TCP stream reconstruction, payload carving, and malware triage.</td>
+      <td>SHA-256 hash, extracted strings, certificate X.509 details.</td>
+    </tr>
+  </tbody>
+</table>
+
+</body>
+</html>
