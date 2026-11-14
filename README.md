@@ -136,7 +136,6 @@ NIDS-Forensics-Lab/
 │   ├── LAB_WORKBOOK.md                # Full chronological step-by-step implementation journal
 │   ├── DOCKER_FIREWALL_CASE_STUDY.md  # Deep dive into Docker/nftables forwarding conflict & resolution
 │   ├── INTERVIEW_DEFENSE_GUIDE.md     # SOC technical interview Q&A (flags, flow, detection_filter, Zeek)
-│   └── projects_roadmap.pdf           # Master engineering roadmap (CI1 -> M2 Alternance)
 ├── rules/
 │   └── local.rules                    # Custom Suricata detection rules with MITRE/OWASP mappings
 ├── screenshots/                       # 8 essential, high-resolution evidence screenshots
