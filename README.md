@@ -12,9 +12,10 @@ A production-grade Blue Team network security monitoring environment built to in
 
 ## Core Documentation & Reference Guides
 
-- **[Project 2: Complete Attack Vectors & OWASP/MITRE Reference Guide](Project2NIDSAttacksandOWASPGuide%20(1).pdf)** ([docs copy](docs/Project2_NIDS_Attacks_and_OWASP_Guide.pdf)): Comprehensive breakdown of the 6 attack vectors, MITRE ATT&CK vs. OWASP Top 10 mappings, Suricata signature mechanics, Zeek telemetry fields, and Wireshark forensic filters.
-- **[Lab Implementation Workbook](docs/LAB_WORKBOOK.md)**: Chronological step-by-step engineering journal detailing hypervisor plumbing, dual-NIC setup, sensor hardening, rule authoring, and upcoming traffic replay phases.
+- **[Project 2: Complete Attack Vectors & OWASP/MITRE Reference Guide](Project2NIDSAttacksandOWASPGuide%20(1).pdf)**: Comprehensive breakdown of the 6 attack vectors, MITRE ATT&CK vs. OWASP Top 10 mappings, Suricata signature mechanics, Zeek telemetry fields, and Wireshark forensic filters.
+- **[Lab Implementation Workbook](docs/LAB_WORKBOOK.md)**: Chronological step-by-step engineering journal detailing hypervisor plumbing, dual-NIC setup, sensor hardening, rule authoring, and forensic replay execution.
 - **[Technical Case Study: Docker vs. Libvirt Firewall Collision](docs/DOCKER_FIREWALL_CASE_STUDY.md)**: Deep dive into diagnosing and resolving the host nftables `FORWARD drop` collision caused by Docker Engine on Fedora Workstation.
+- **[Senior SOC Interview Defense Guide](docs/INTERVIEW_DEFENSE_GUIDE.md)**: Technical breakdown of detection filter mechanics, TCP flag masking (`flags:S,12`), flow state tracking, NIC offload impacts, and Zeek vs. Suricata architecture.
 
 ---
 
@@ -22,7 +23,7 @@ A production-grade Blue Team network security monitoring environment built to in
 
 ```text
 ┌────────────────────────────────────────────────────────────────────────┐
-│                        FEDORA WORKSTATION 44 (HOST)                    │
+│                        FEDORA WORKSTATION (HOST)                       │
 │   Hypervisor: QEMU/KVM managed via libvirt / virt-manager              │
 │   Traffic Engine: tcpreplay, wireshark, tshark, nftables               │
 │                                                                        │
@@ -36,10 +37,10 @@ A production-grade Blue Team network security monitoring environment built to in
                   │ vnet0 (DHCP)                     │ vnet1 (No IP / Promisc)
                   ▼                                  ▼
 ┌─────────────────┴──────────────────────────────────┴───────────────────┐
-│                    UBUNTU SERVER 26.04 SENSOR VM                       │
+│                    UBUNTU SERVER SENSOR VM                             │
 │                         Hostname: leviathan@levi                       │
 │                                                                        │
-│   enp1s0: 192.168.122.130 (SSH management, package repository updates) │
+│   enp1s0: 192.168.122.130 (SSH management, package updates)            │
 │   enp7s0: Passive Tap (Promiscuous mode, Hardware Offloads OFF)         │
 │                                                                        │
 │   ┌───────────────────────────┐     ┌──────────────────────────────┐   │
@@ -53,16 +54,16 @@ A production-grade Blue Team network security monitoring environment built to in
 
 ---
 
-## Threat Detection Coverage Matrix
+## Threat Detection Coverage Matrix & Forensic Results
 
-| # | Attack Vector | MITRE ATT&CK | OWASP 2025 | Suricata Signature Mechanics | Zeek Forensic Artifact |
-|---|---|---|---|---|---|
-| **1** | **Half-Open TCP SYN Scan** | `T1046` | A02 | `flags:S,12; flow:stateless; detection_filter:track by_src, count 20, seconds 5` | `conn.log` (State: `S0`, `REJ`, high `id.orig_h` rate) |
-| **2** | **Obfuscated Base64 User-Agent** | `T1071.001` | A05, A09 | `http.user_agent; pcre:"/^[A-Za-z0-9+/]{30,}={0,2}$/"` | `http.log` (`user_agent` field extraction) |
-| **3** | **Unauthorized SSH Egress Tunnel** | `T1572`, `T1021.004` | A01 | `![22]; flow:established,to_server; content:"SSH-2.0-"; depth:8` | `conn.log` + `ssh.log` (Non-standard port analysis) |
-| **4** | **Cobalt Strike / Sliver C2 Beacon** | `T1071.001`, `T1041` | A08 | `http.method:GET; http.uri; pcre:"/^\/(submit\.php\?id=\|activity\|[a-zA-Z0-9]{4})$/"` | `conn.log` (Jitter/interval analysis) + `http.log` |
-| **5** | **Rogue / Self-Signed TLS Cert** | `T1587.003` | A04 | `tls.cert_serial; content:"08:bb:00:ee"` | `ssl.log` (`server_name`, `ja3`) + `x509.log` (`certificate.serial`) |
-| **6** | **DNS Data Exfiltration Tunnel** | `T1048.003` | A02 | `dns.query; pcre:"/^[a-zA-Z0-9_-]{35,}\./"` | `dns.log` (High query entropy, query length >35) |
+| # | Attack Vector | MITRE ATT&CK | OWASP 2025 | Suricata Signature (`sid`) | Zeek Log & Forensic Evidence | Status |
+|---|---|---|---|---|---|---|
+| **1** | **Half-Open TCP SYN Scan** | `T1046` | A02 | `flags:S,12; flow:stateless; detection_filter:count 20, seconds 5` (`1000001`) | `conn.log`: Rate-burst detected, connection states `S0` and `REJ` | Verified |
+| **2** | **Obfuscated Base64 User-Agent** | `T1071.001` | A05, A09 | `http.user_agent; pcre:"/^[A-Za-z0-9+/]{30,}={0,2}$/"` (`1000002`) | `http.log`: Decoded payload `whoami && id && uname -a && cat /etc/passwd` | Verified |
+| **3** | **Unauthorized SSH Egress Tunnel** | `T1572` | A01 | `![22]; flow:established,to_server; content:"SSH-2.0-"; depth:8` (`1000003`) | `ssh.log`: SSH protocol banner detected outbound over non-standard port 443 | Verified |
+| **4** | **Cobalt Strike / Sliver C2 Beacon** | `T1071.001`, `T1041` | A08 | `http.method:GET; http.uri; pcre stager regex` (`1000004`) | `http.log`: 5.0s heartbeat rhythm; Wireshark carved `aB3z` (`sha256: 1d830b57...`) | Verified |
+| **5** | **Rogue Cobalt Strike TLS Cert** | `T1587.003` | A04 | `tls.cert_serial; content:"08:bb:00:ee"` (`1000005`) | Wireshark & `ssl.log`: Cert serial `0x08bb00ee`, Issuer `CN=Major Cobalt Strike, O=Microsoft Corporation` | Verified |
+| **6** | **DNS Data Exfiltration Tunnel** | `T1048.003` | A02 | `dns.query; pcre:"/^[a-zA-Z0-9_-]{35,}\./"` (`1000006`) | `dns.log`: Subdomain chunks reassembled to `CONFIDENTIAL_SOC_SECRET:db_pass=S3cr3tP@ss2026!...` | Verified |
 
 ---
 
@@ -83,29 +84,74 @@ Suricata is configured with Linux `af-packet` in `suricata.yaml` to read packets
 
 ---
 
+## Forensic Investigation Evidence
+
+### 1. Sensor Interface & Stealth Configuration
+Promiscuous mode enabled on `enp7s0` without IP assignment:
+![Promiscuous Mode](screenshots/01_sensor_promisc_mode.png)
+
+### 2. Detection Rule Compilation & Engine Health
+All 6 custom rules loaded and validated with zero compilation errors (`suricata -T`):
+![Suricata Syntax Test](screenshots/02_suricata_syntax_test.png)
+
+### 3. Attack 1 & 2: SYN Scan Filtering & Base64 Payload Decoding
+Rate-limited SYN scan detection (`S0`/`REJ`) and decoded covert command from HTTP User-Agent:
+![SYN Scan & Base64 Alert](screenshots/03_syn_scan_and_base64_c2_alert.png)
+
+### 4. Attack 3 & 4: Outbound SSH Tunnel & Periodic C2 Beaconing
+Alerts showing reverse SSH on port 443 and the exact 5.0-second periodic beacon interval:
+![SSH Tunnel & C2 Beaconing](screenshots/04_ssh_tunnel_and_c2_beaconing.png)
+
+### 5. Malware Payload Carving via Wireshark
+Reconstructing and extracting the unencrypted staging executable (`aB3z`) from HTTP stream:
+![Wireshark Payload Carving](screenshots/05_wireshark_payload_carving.png)
+
+### 6. Carved Payload Triage & Hashing
+Cryptographic identification and string extraction of the carved binary:
+- **File Type:** ELF 64-bit LSB Executable
+- **SHA256:** `1d830b572ebe373ac2625f8ecc42b68121e4b2e3893e142984c6b2ff23d5f769`
+- **Extracted String:** `SOC_LAB_COBALT_STRIKE_SIMULATED_STAGER_PAYLOAD_DO_NOT_EXECUTE_`
+
+![Payload Triage](screenshots/06_carved_payload_triage.png)
+
+### 7. Attack 5: Rogue Cobalt Strike TLS Certificate Impersonation
+Handshake Type 11 inspection revealing the default Cobalt Strike certificate serial `0x08bb00ee` and spoofed Microsoft Corporation issuer:
+![Rogue TLS Certificate](screenshots/07_rogue_tls_certificate.png)
+
+### 8. Attack 6: DNS Exfiltration Reassembly
+Extracting high-entropy subdomain chunks from `dns.log` and decoding the exfiltrated credentials:
+- **Exfiltrated Secret:** `CONFIDENTIAL_SOC_SECRET:db_pass=S3cr3tP@ss2026!;api_key=AKIA9988776655443322`
+
+![DNS Exfiltration Decoded Secret](screenshots/08_dns_exfiltration_decoded_secret.png)
+
+---
+
 ## Repository Structure
 
 ```text
-Project-2-NIDS-Forensics-Lab/
-├── README.md                                  # Master documentation & technical overview
-├── Project2NIDSAttacksandOWASPGuide (1).pdf   # Complete Attack Vectors & OWASP/MITRE Reference Guide
+NIDS-Forensics-Lab/
+├── README.md                          # Master documentation & technical showcase
+├── Project2NIDSAttacksandOWASPGuide (1).pdf # Master attack vectors & OWASP/MITRE guide
 ├── docs/
-│   ├── LAB_WORKBOOK.md                        # Full chronological step-by-step implementation journal
-│   ├── DOCKER_FIREWALL_CASE_STUDY.md          # Deep dive into Docker/nftables forwarding conflict & resolution
-│   ├── Project2_NIDS_Attacks_and_OWASP_Guide.pdf # Attack & OWASP Reference Guide (docs copy)
-│   └── projects_roadmap.pdf                   # Security engineering roadmap
+│   ├── LAB_WORKBOOK.md                # Full chronological step-by-step implementation journal
+│   ├── DOCKER_FIREWALL_CASE_STUDY.md  # Deep dive into Docker/nftables forwarding conflict & resolution
+│   ├── INTERVIEW_DEFENSE_GUIDE.md     # SOC technical interview Q&A (flags, flow, detection_filter, Zeek)
+│   └── projects_roadmap.pdf           # Master engineering roadmap (CI1 -> M2 Alternance)
 ├── rules/
 │   └── local.rules                    # Custom Suricata detection rules with MITRE/OWASP mappings
 ├── scripts/
+│   ├── generate_pcaps.py              # Deterministic RFC-compliant PCAP attack generator
 │   ├── nids-nic-tune.service          # Promiscuous mode & offload disablement service
 │   └── docker-libvirt-fix.service     # Host-level Docker nftables exception service
-├── screenshots/                       # 24 chronological, high-resolution evidence screenshots
-│   ├── 01_soc_bridge_isolated_network.png
-│   ├── 06_dual_nics_detected_ip_link.png
-│   ├── 08_ssh_connected_promisc_mode_up.png
-│   ├── 19_suricata_test_1_rule_success.png
-│   ├── 21_zeek_9_installed_configured_enp7s0.png
-│   └── 22_suricata_test_2_rules_success.png
-├── pcaps/                             # Replay PCAP samples for Phase 4
+├── screenshots/                       # 8 essential, high-resolution evidence screenshots
+│   ├── 01_sensor_promisc_mode.png
+│   ├── 02_suricata_syntax_test.png
+│   ├── 03_syn_scan_and_base64_c2_alert.png
+│   ├── 04_ssh_tunnel_and_c2_beaconing.png
+│   ├── 05_wireshark_payload_carving.png
+│   ├── 06_carved_payload_triage.png
+│   ├── 07_rogue_tls_certificate.png
+│   └── 08_dns_exfiltration_decoded_secret.png
+├── pcaps/                             # 6 attack PCAP samples + carved stager payload
 └── zeek-logs/                         # Extracted Zeek forensic logs
 ```
